@@ -1,5 +1,6 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
@@ -8,21 +9,23 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
         darkMode: 'class',
         theme: {
           extend: {
             colors: {
-              'brand-orange': '#FF7A00',
-              'dark-bg': '#0D0D0D',
-              'dark-card': '#1E1E1E',
-              'light-bg': '#FFFFFF',
-              'light-card': '#F5F5F5',
+              'brand-primary': '#F97316', // Vibrant Orange
+              'brand-secondary': '#FB923C',
+              'dark-bg': '#000000', // Pure Black
+              'dark-card': '#0A0A0A', // Deep Gray for cards
+              'light-bg': '#F8FAFC',
+              'light-card': '#FFFFFF',
             },
             fontFamily: {
-              sans: ['Poppins', 'sans-serif'],
+              sans: ['Inter', 'sans-serif'],
+              mono: ['JetBrains Mono', 'monospace'],
             },
           }
         }
@@ -39,8 +42,23 @@
   }
 }
 </script>
+<style>
+  body {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  body::-webkit-scrollbar {
+    display: none;
+  }
+  .glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+</style>
 </head>
-  <body class="antialiased">
+  <body class="antialiased selection:bg-brand-primary selection:text-white bg-light-bg dark:bg-dark-bg">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>

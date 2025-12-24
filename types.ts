@@ -55,4 +55,6 @@ export interface Goal {
     deadline: string;
 }
 
-export type Persona = 'Scientist' | 'Mentor' | 'Motivator' | 'Jester';
+export type Persona = 'ProductManager' | 'VentureCapitalist' | 'TechLead' | 'UXDesigner';
+
+export type StartupStage = 'Idea' | 'MVP' | 'Seed' | 'Scale';

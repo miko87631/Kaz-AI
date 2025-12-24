@@ -17,21 +17,21 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, onSelect, progress, isE
     const progressPercentage = isEnrolled && course.lessons.length > 0 ? (progress / course.lessons.length) * 100 : 0;
     
     return (
-        <div className="bg-light-card dark:bg-dark-card p-5 rounded-2xl shadow-md transition-transform hover:scale-105 duration-300 flex flex-col">
-            <h3 className="text-xl font-bold mb-2">{course.title}</h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-4 h-12 flex-grow">{course.description}</p>
+        <div className="bg-light-card dark:bg-dark-card p-5 rounded-2xl border border-gray-100 dark:border-gray-900 shadow-md transition-all hover:scale-[1.02] duration-300 flex flex-col">
+            <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">{course.title}</h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-4 h-12 flex-grow text-sm">{course.description}</p>
             {isEnrolled && (
-                 <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mb-4">
-                    <div className="bg-brand-orange h-2.5 rounded-full" style={{ width: `${progressPercentage}%` }}></div>
+                 <div className="w-full bg-gray-200 dark:bg-gray-900 rounded-full h-2 mb-4">
+                    <div className="bg-brand-primary h-2 rounded-full shadow-[0_0_8px_rgba(249,115,22,0.4)]" style={{ width: `${progressPercentage}%` }}></div>
                 </div>
             )}
             <div className="flex justify-between items-center mt-auto">
-                 <span className={`text-sm font-semibold ${isEnrolled ? 'text-green-500' : 'text-gray-500'}`}>
+                 <span className={`text-[10px] font-bold uppercase tracking-widest ${isEnrolled ? 'text-green-500' : 'text-gray-400'}`}>
                     {isEnrolled ? strings.enrolled[language] : strings.notEnrolled[language]}
                 </span>
                 <button
                     onClick={() => onSelect(course)}
-                    className="bg-brand-orange text-white font-semibold py-2 px-4 rounded-xl transition hover:bg-orange-600"
+                    className="bg-brand-primary text-white font-bold py-2 px-4 rounded-xl text-xs uppercase tracking-widest transition hover:opacity-90 shadow-lg shadow-brand-primary/20 active:scale-95"
                 >
                     {strings.details[language]}
                 </button>
@@ -111,10 +111,12 @@ const CoursesPage: React.FC = () => {
     return (
         <div className="p-4 space-y-6">
             <div className="flex justify-between items-center">
-                <h2 className="text-3xl font-bold">{strings.coursesTitle[language]}</h2>
-                <p className="font-semibold text-brand-orange text-lg">{strings.xp[language]}: {xp}</p>
+                <h2 className="text-2xl font-bold uppercase tracking-tight">{strings.coursesTitle[language]}</h2>
+                <div className="bg-brand-primary/10 border border-brand-primary/20 px-3 py-1 rounded-full">
+                    <p className="font-bold text-brand-primary text-sm uppercase tracking-widest">{strings.xp[language]}: {xp}</p>
+                </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-12">
                 {courses.map(course => (
                     <CourseCard
                         key={course.id}

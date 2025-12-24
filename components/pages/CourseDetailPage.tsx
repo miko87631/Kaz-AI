@@ -60,41 +60,41 @@ const CourseDetailPage: React.FC<CourseDetailPageProps> = ({
 
     return (
         <div className="p-4 space-y-6">
-            <button onClick={onBack} className="flex items-center text-brand-orange font-semibold hover:underline mb-4">
-                <ArrowLeft size={20} className="mr-2"/>
+            <button onClick={onBack} className="flex items-center text-brand-primary font-bold uppercase tracking-widest text-xs hover:underline mb-4">
+                <ArrowLeft size={16} className="mr-2"/>
                 {strings.backToCourses[language]}
             </button>
 
-            <div className="bg-light-card dark:bg-dark-card p-6 rounded-2xl shadow-md">
-                <h2 className="text-3xl font-bold mb-2">{course.title}</h2>
-                <p className="text-gray-600 dark:text-gray-400 mb-6">{course.fullDescription}</p>
+            <div className="bg-light-card dark:bg-dark-card p-6 rounded-3xl border border-gray-100 dark:border-gray-900 shadow-xl">
+                <h2 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white tracking-tight">{course.title}</h2>
+                <p className="text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">{course.fullDescription}</p>
 
-                <h3 className="text-xl font-bold mb-3">{strings.lessons[language]}</h3>
-                <ul className="space-y-3 mb-6">
+                <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400 mb-4">{strings.lessons[language]}</h3>
+                <ul className="space-y-3 mb-8">
                     {course.lessons.map((lesson, index) => (
-                        <li key={lesson.id} className="flex items-center p-3 bg-gray-200 dark:bg-gray-800 rounded-lg">
+                        <li key={lesson.id} className="flex items-center p-4 bg-gray-50 dark:bg-gray-950 rounded-2xl border border-transparent dark:border-gray-900">
                              {index < completedLessons ? (
                                 <CheckCircle size={20} className="text-green-500 mr-3 flex-shrink-0" />
                             ) : (
                                 <Circle size={20} className="text-gray-400 mr-3 flex-shrink-0" />
                             )}
-                            <span className={index < completedLessons ? 'line-through text-gray-500' : ''}>{lesson.title}</span>
+                            <span className={`text-sm ${index < completedLessons ? 'line-through text-gray-500' : 'text-gray-800 dark:text-gray-200 font-medium'}`}>{lesson.title}</span>
                         </li>
                     ))}
                 </ul>
 
-                <h3 className="text-xl font-bold mb-2">{strings.yourProgress[language]}</h3>
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 mb-2 relative">
-                    <div className="bg-brand-orange h-4 rounded-full flex items-center justify-center" style={{ width: `${progressPercentage}%` }}>
-                       <span className="text-white text-xs font-bold absolute left-1/2 -translate-x-1/2">{Math.round(progressPercentage)}%</span>
+                <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400 mb-4">{strings.yourProgress[language]}</h3>
+                <div className="w-full bg-gray-200 dark:bg-gray-900 rounded-full h-5 mb-3 relative overflow-hidden">
+                    <div className="bg-brand-primary h-full rounded-full flex items-center justify-center transition-all duration-500 shadow-[0_0_12px_rgba(249,115,22,0.4)]" style={{ width: `${progressPercentage}%` }}>
+                       <span className="text-white text-[10px] font-black absolute left-1/2 -translate-x-1/2 uppercase">{Math.round(progressPercentage)}%</span>
                     </div>
                 </div>
-                <p className="text-sm text-center text-gray-500 mb-6">{progressText}</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-center text-gray-500 mb-8">{progressText}</p>
                 
                 <div className="flex flex-col sm:flex-row gap-4">
                     <SafeButton
                         onPressedAsync={handleEnrollToggle}
-                        className={`w-full font-bold py-3 px-6 rounded-xl transition-colors text-center ${isEnrolled ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-green-500 hover:bg-green-600 text-white'}`}
+                        className={`w-full font-bold py-4 px-6 rounded-2xl transition-all text-[10px] uppercase tracking-[0.2em] text-center ${isEnrolled ? 'bg-red-500/10 text-red-500 border border-red-500/20' : 'bg-green-500 text-white shadow-lg shadow-green-500/20'}`}
                     >
                         {isEnrolled ? strings.unenroll[language] : strings.enroll[language]}
                     </SafeButton>
@@ -102,7 +102,7 @@ const CourseDetailPage: React.FC<CourseDetailPageProps> = ({
                     <SafeButton
                         onPressedAsync={handleCompleteLesson}
                         disabled={!isEnrolled || completedLessons >= course.lessons.length}
-                        className="w-full bg-brand-orange text-white font-bold py-3 px-6 rounded-xl transition hover:bg-orange-600 disabled:bg-gray-500 disabled:cursor-not-allowed text-center"
+                        className="w-full bg-brand-primary text-white font-bold py-4 px-6 rounded-2xl transition-all hover:opacity-90 shadow-lg shadow-brand-primary/30 disabled:bg-gray-500 disabled:shadow-none disabled:cursor-not-allowed text-[10px] uppercase tracking-[0.2em] text-center"
                     >
                         {(isEnrolled && completedLessons < course.lessons.length) ? `${strings.completeLesson[language]} "${course.lessons[nextLessonIndex].title}"` : strings.courseCompleted[language]}
                     </SafeButton>

@@ -59,12 +59,14 @@ const App: React.FC = () => {
   const NavItem = ({ page, icon: Icon, labelKey }: { page: Page, icon: React.ElementType, labelKey: keyof typeof strings }) => (
     <button
       onClick={() => setActivePage(page)}
-      className={`flex flex-col items-center justify-center w-full pt-2 pb-1 transition-colors duration-200 ${
-        activePage === page ? 'text-brand-orange' : 'text-gray-400 hover:text-brand-orange'
+      className={`flex flex-col items-center justify-center w-full pt-2 pb-1 transition-all duration-200 ${
+        activePage === page ? 'text-brand-primary' : 'text-gray-400 hover:text-brand-primary/70'
       }`}
     >
-      <Icon size={24} />
-      <span className="text-xs mt-1">{strings[labelKey][language]}</span>
+      <Icon size={24} strokeWidth={activePage === page ? 2.5 : 2} />
+      <span className={`text-[10px] mt-1 font-bold uppercase tracking-widest ${activePage === page ? 'opacity-100' : 'opacity-60'}`}>
+        {strings[labelKey][language]}
+      </span>
     </button>
   );
 
@@ -75,8 +77,8 @@ const App: React.FC = () => {
         <main className="flex-grow container mx-auto px-4 py-4 sm:px-6 lg:px-8 overflow-y-auto pb-20">
           {renderPage()}
         </main>
-        <footer className="sticky bottom-0 left-0 right-0 bg-white dark:bg-dark-card border-t border-gray-200 dark:border-gray-700 shadow-lg">
-          <nav className="flex justify-around items-center h-16">
+        <footer className="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-dark-card/90 backdrop-blur-md border-t border-gray-200 dark:border-gray-900 z-50">
+          <nav className="flex justify-around items-center h-16 container mx-auto">
              <NavItem page="home" icon={Home} labelKey="navHome" />
              <NavItem page="mentor" icon={Bot} labelKey="navMentor" />
              <NavItem page="courses" icon={BookOpen} labelKey="navCourses" />

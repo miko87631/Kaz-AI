@@ -4,17 +4,11 @@ import { ChatMessage } from '../types';
 
 const API_KEY = process.env.API_KEY;
 
-if (!API_KEY) {
-  // This is a fallback for development and will not be hit in the production environment
-  // where the API key is expected to be set.
-  console.warn("API_KEY is not set. Using a mock response.");
-}
-
 const ai = new GoogleGenAI({ apiKey: API_KEY! });
 
 const getMockResponse = (prompt: string) => {
     return new Promise<GenerateContentResponse>(resolve => setTimeout(() => resolve({
-        text: `This is a mock response for your prompt: "${prompt}". Please configure your API key to get real answers.`,
+        text: `Это имитация ответа для вашего запроса: "${prompt}". Настройте API ключ для получения реальных советов от KazAI.`,
         candidates: [],
         functionCalls: [],
     }), 500));
@@ -25,9 +19,20 @@ export const generateChatResponse = async (history: ChatMessage[], newMessage: s
     return getMockResponse(newMessage);
   }
 
-  const modelName = isThinkingMode ? 'gemini-2.5-pro' : 'gemini-2.5-flash';
-  const config = isThinkingMode ? { thinkingConfig: { thinkingBudget: 32768 } } : {};
+  const modelName = isThinkingMode ? 'gemini-3-pro-preview' : 'gemini-3-flash-preview';
   
+  // Strict formatting rules in system instruction
+  const systemInstruction = `Ты - экспертный ментор в KazAI. 
+  Твоя задача: помогать пользователям развивать их стартапы и изучать ИИ.
+  
+  ПРАВИЛА ОФОРМЛЕНИЯ ОТВЕТА:
+  - НИКОГДА не используй Markdown.
+  - НИКОГДА не используй символы *, **, _, __, #.
+  - НЕ выделяй текст жирным или курсивом.
+  - Используй только обычный текст.
+  - Списки оформляй ТОЛЬКО цифрами (1., 2., 3.) или дефисами (-).
+  - Твой ответ должен быть чистым текстом, который легко читается без спецсимволов.`;
+
   const contents = [
       ...history.map(msg => ({
           role: msg.role,
@@ -37,9 +42,17 @@ export const generateChatResponse = async (history: ChatMessage[], newMessage: s
   ];
 
   try {
+    const config: any = {
+      systemInstruction,
+    };
+    
+    if (isThinkingMode) {
+      config.thinkingConfig = { thinkingBudget: 32768 };
+    }
+
     const response = await ai.models.generateContent({
       model: modelName,
-      contents: contents as any, // Type assertion to match SDK expectations
+      contents: contents as any,
       config,
     });
     return response;
@@ -52,26 +65,29 @@ export const generateChatResponse = async (history: ChatMessage[], newMessage: s
 
 export const generateStartupPlan = async (idea: string): Promise<GenerateContentResponse> => {
     if (!API_KEY) {
-        return getMockResponse(`Generate a startup plan for: ${idea}`);
+        return getMockResponse(`Сгенерировать план для: ${idea}`);
     }
 
-    const systemInstruction = `You are an expert business planner and startup consultant. 
-    Analyze the following startup idea and generate a concise, actionable business plan.
-    The plan should be well-structured and easy to read.
-    Format your response in Markdown. Include the following sections:
-    1.  **Product Description**: What is the core product or service?
-    2.  **Target Audience**: Who are the primary customers?
-    3.  **Marketing & Sales Strategy**: How will you reach your customers?
-    4.  **Financial Projections**: Briefly outline potential revenue streams and key costs.
-    5.  **SWOT Analysis**: Strengths, Weaknesses, Opportunities, Threats.`;
+    const systemInstruction = `Ты - ведущий стратег венчурного фонда. 
+    Создай Actionable Roadmap для этого стартапа через платформу KazAI.
+    ФОРМАТ ОТВЕТА:
+    Используй ТОЛЬКО обычный текст и простые списки.
+    Разделы:
+    1. Суть продукта (коротко)
+    2. Целевая аудитория
+    3. План выхода на рынок (GTM)
+    4. Монетизация
+    5. Риски и SWOT
+    
+    НИКАКОГО Markdown (без звезд, решеток и подчеркиваний).`;
     
     try {
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-pro',
+            model: 'gemini-3-pro-preview',
             contents: idea,
             config: {
                 systemInstruction,
-                thinkingConfig: { thinkingBudget: 16384 } // High budget for detailed plan
+                thinkingConfig: { thinkingBudget: 16384 }
             }
         });
         return response;

@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Send, Cpu, Zap, Loader } from 'lucide-react';
+import { Send, Cpu, Zap, Loader, ShieldCheck, Target } from 'lucide-react';
 import { generateChatResponse } from '../../services/geminiService';
 import { ChatMessage } from '../../types';
 import ChatMessageBubble from '../ui/ChatMessageBubble';
@@ -25,7 +25,6 @@ const AiMentorPage: React.FC = () => {
     scrollToBottom();
   }, [messages]);
   
-  // Update initial greeting if language changes
   useEffect(() => {
     setMessages(currentMessages => {
         if(currentMessages.length === 1 && currentMessages[0].role === 'model') {
@@ -47,7 +46,10 @@ const AiMentorPage: React.FC = () => {
     try {
       const history = messages.filter(m => !m.isThinking);
       const response = await generateChatResponse(history, newUserMessage.text, isThinkingMode);
-      const modelResponse: ChatMessage = { role: 'model', text: response.text };
+      
+      // Sanitization: Ensure no markdown characters leaked if the model failed to follow instructions
+      const sanitizedText = response.text?.replace(/[*#_]{1,}/g, '') || '';
+      const modelResponse: ChatMessage = { role: 'model', text: sanitizedText };
       
       setMessages(prev => {
         const newMessages = [...prev];
@@ -81,48 +83,58 @@ const AiMentorPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-full max-h-[calc(100vh-150px)] md:max-h-[calc(100vh-100px)] bg-light-bg dark:bg-dark-bg">
-      <div className="flex-grow overflow-y-auto p-4 space-y-4">
+    <div className="flex flex-col h-[calc(100vh-140px)] bg-light-bg dark:bg-dark-bg">
+      {/* --- Mode Indicator --- */}
+      <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800">
+         <div className="flex items-center space-x-2">
+            <ShieldCheck size={16} className="text-brand-primary" />
+            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">{strings.aiMode[language]}</span>
+         </div>
+         <div className="flex bg-gray-200 dark:bg-gray-800 p-1 rounded-xl">
+            <button 
+                onClick={() => setIsThinkingMode(false)}
+                className={`flex items-center space-x-1 px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all ${!isThinkingMode ? 'bg-white dark:bg-gray-700 text-brand-primary shadow-sm' : 'text-gray-400'}`}
+            >
+                <Zap size={12} fill={!isThinkingMode ? "currentColor" : "none"} />
+                <span>{strings.modeFast[language]}</span>
+            </button>
+            <button 
+                onClick={() => setIsThinkingMode(true)}
+                className={`flex items-center space-x-1 px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all ${isThinkingMode ? 'bg-white dark:bg-gray-700 text-brand-primary shadow-sm' : 'text-gray-400'}`}
+            >
+                <Cpu size={12} fill={isThinkingMode ? "currentColor" : "none"} />
+                <span>{strings.modeThinking[language]}</span>
+            </button>
+         </div>
+      </div>
+
+      {/* --- Chat Content --- */}
+      <div className="flex-grow overflow-y-auto p-4 space-y-6 scrollbar-hide">
         {messages.map((msg, index) => (
           <ChatMessageBubble key={index} message={msg} />
         ))}
         <div ref={messagesEndRef} />
       </div>
-      <div className="p-4 bg-light-card dark:bg-dark-card border-t border-gray-200 dark:border-gray-700">
-        <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300">{strings.aiMode[language]}</h3>
-            <div className="flex items-center p-1 bg-gray-200 dark:bg-gray-900 rounded-full">
-                <button 
-                    onClick={() => setIsThinkingMode(false)}
-                    className={`px-3 py-1 text-sm rounded-full transition-colors ${!isThinkingMode ? 'bg-brand-orange text-white shadow' : 'text-gray-500'}`}
-                >
-                    <div className="flex items-center"><Zap size={14} className="mr-1"/> {strings.modeFast[language]}</div>
-                </button>
-                <button 
-                    onClick={() => setIsThinkingMode(true)}
-                    className={`px-3 py-1 text-sm rounded-full transition-colors ${isThinkingMode ? 'bg-brand-orange text-white shadow' : 'text-gray-500'}`}
-                >
-                    <div className="flex items-center"><Cpu size={14} className="mr-1"/> {strings.modeThinking[language]}</div>
-                </button>
-            </div>
-        </div>
-        <div className="relative">
+
+      {/* --- Input Area --- */}
+      <div className="p-4 bg-white dark:bg-dark-bg border-t border-gray-100 dark:border-gray-800">
+        <div className="relative group">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder={isThinkingMode ? strings.placeholderComplex[language] : strings.placeholderSimple[language]}
-            className="w-full p-3 pr-20 rounded-full bg-gray-200 dark:bg-gray-800 border-transparent focus:ring-2 focus:ring-brand-orange focus:border-transparent transition"
+            className="w-full p-4 pr-14 rounded-2xl bg-gray-50 dark:bg-gray-900 border-transparent focus:bg-white dark:focus:bg-dark-card focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all duration-300 text-sm shadow-inner"
             disabled={isLoading}
           />
           <div className="absolute inset-y-0 right-0 flex items-center pr-2">
              <SafeButton
                 onPressedAsync={handleSend}
-                className="bg-brand-orange text-white rounded-full p-2.5 hover:bg-orange-600 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
-                disabled={isLoading}
+                className="bg-brand-primary text-white rounded-xl p-2.5 hover:shadow-lg hover:shadow-brand-primary/30 transition-all disabled:bg-gray-300 active:scale-90"
+                disabled={isLoading || !input.trim()}
              >
-                 {isLoading ? <Loader className="animate-spin" size={20} /> : <Send size={20} />}
+                 {isLoading ? <Loader className="animate-spin" size={18} /> : <Send size={18} />}
              </SafeButton>
           </div>
         </div>
