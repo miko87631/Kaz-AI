@@ -12,14 +12,28 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      flex-direction: column;
+      min-height: 100vh;
       margin: 0;
+      padding: 20px;
     }
     .box {
-      max-width: 600px;
+      max-width: 700px;
       text-align: center;
+      background: #1e293b;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
     }
-    a {
+    h1 {
+      margin-bottom: 15px;
+      color: #38bdf8;
+    }
+    p {
+      margin: 10px 0;
+      line-height: 1.5;
+    }
+    a.button {
       display: inline-block;
       margin-top: 20px;
       padding: 12px 24px;
@@ -29,6 +43,13 @@
       border-radius: 8px;
       font-weight: bold;
     }
+    iframe {
+      width: 100%;
+      height: 500px;
+      border: 1px solid #ccc;
+      margin-top: 20px;
+      border-radius: 10px;
+    }
   </style>
 </head>
 <body>
@@ -36,15 +57,29 @@
   <div class="box">
     <h1>KazA1 AI Informator</h1>
 
-    <p>
-      AI-проект для информирования и помощи пользователям.  
-      Создан на базе Google AI Studio.
+    <p><b>Проблема:</b><br>
+      Людям сложно быстро получать точную и понятную информацию в одном месте.
     </p>
 
-    <!-- Кнопка с рабочей ссылкой -->
-    <a href="https://ai.studio/apps/drive/1pnb3vNTDeV9H3KWRrx05iFOT59A3WPOi" target="_blank">
-      Попробовать AI
+    <p><b>Решение:</b><br>
+      KazA1 — AI-информатор, который помогает пользователям получать ответы и информацию с помощью искусственного интеллекта.
+    </p>
+
+    <p><b>Для кого:</b><br>
+      Студенты, школьники, стартаперы и пользователи, которым нужен быстрый доступ к знаниям.
+    </p>
+
+    <p><b>Инновация:</b><br>
+      Проект создан на базе Google AI Studio и может масштабироваться как веб-сервис и мобильное приложение.
+    </p>
+
+    <p>Чтобы открыть AI Studio, нажмите на кнопку ниже:</p>
+    <a class="button" href="https://ai.studio/apps/drive/1pnb3vNTDeV9H3KWRrx05iFOT59A3WPOi" target="_blank">
+      Перейти к AI
     </a>
+
+    <!-- Встроенное превью (опционально) -->
+    <iframe src="https://ai.studio/apps/drive/1pnb3vNTDeV9H3KWRrx05iFOT59A3WPOi"></iframe>
   </div>
 
 </body>
